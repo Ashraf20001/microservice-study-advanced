@@ -1,0 +1,81 @@
+services:
+  rabbit:
+    image: rabbitmq:3.13-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  config:
+    image: "ashraf2001/config:mcconfig"
+    container_name: "ashraf_config"
+    ports:
+      - "8071:8071"
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  accounts:
+    image: "ashraf2001/accounts:mcaccounts"
+    container_name: "ashraf_acc"
+    ports:
+      - "8080:8080"
+    depends_on:
+      config:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "accounts"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-base-config
+
+  cards:
+    image: "ashraf2001/cards:mcccards"
+    container_name: "ashraf_card"
+    ports:
+      - "9000:9000"
+    depends_on:
+      config:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "cards"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-base-config
+
+
+  loans:
+    image: "ashraf2001/loans:mcloans"
+    container_name: "ashraf_loan"
+    ports:
+      - "8090:8090"
+    depends_on:
+      config:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-base-config
+
+networks:
+  microservice:
+    driver: "bridge"
