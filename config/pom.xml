@@ -46,15 +46,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-config-monitor -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-config-monitor</artifactId>
-		</dependency>
 
 	</dependencies>
 	<dependencyManagement>
@@ -81,7 +72,7 @@
 				<version>3.4.3</version>
 				<configuration>
 					<to>
-						<image>docker.io/ashraf2001/${project.artifactId}:mcconfig</image>
+						<image>docker.io/ashraf2001/${project.artifactId}:mcconfigs7</image>
 					</to>
 				</configuration>
 			</plugin>
