@@ -2,33 +2,23 @@ services:
   network-deploy-service:
     networks:
       - "microservice"
-  mysql_db_config_service:
-    extends:
-      network-deploy-service
-    image: mysql
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 10s
-    environment:
-      MYSQL_ROOT_PASSWORD: "root"
-
-
   microservice-base-config:
     extends:
-      network-deploy-service
+      service: network-deploy-service
     deploy:
       resources:
         limits:
           memory: 700m
 
-  microservice-configserver-base-config:
+  microservice-configserver-config:
     extends:
-      microservice-base-config
+      service: microservice-base-config
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://config:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://config:8071/
+
+  microservice-eureka-config:
+    extends:
+      service: microservice-configserver-config
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8070/eureka/
