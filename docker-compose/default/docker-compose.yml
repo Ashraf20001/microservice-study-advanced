@@ -1,6 +1,6 @@
 services:
   config:
-    image: "ashraf2001/config:mcconfigs8"
+    image: "ashraf2001/config:mcconfigs9"
     container_name: "ashraf_config"
     ports:
       - "8071:8071"
@@ -15,7 +15,7 @@ services:
       service: microservice-base-config
 
   eureka:
-    image: "ashraf2001/eureka:eurekaS8"
+    image: "ashraf2001/eureka:eurekaS9"
     container_name: "ashraf_eureka"
     ports:
       - "8070:8070"
@@ -35,12 +35,18 @@ services:
       service: microservice-configserver-config
 
   accounts:
-    image: "ashraf2001/accounts:mcaccountss8"
+    image: "ashraf2001/accounts:mcaccountss9"
     container_name: "ashraf_acc"
     ports:
       - "8080:8080"
     environment:
       SPRING_APPLICATION_NAME: "accounts"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       config:
         condition: service_healthy
@@ -51,12 +57,18 @@ services:
       service: microservice-eureka-config
 
   cards:
-    image: "ashraf2001/cards:mcccardss8"
+    image: "ashraf2001/cards:mcccardss9"
     container_name: "ashraf_card"
     ports:
       - "9000:9000"
     environment:
       SPRING_APPLICATION_NAME: "cards"
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       config:
         condition: service_healthy
@@ -68,16 +80,44 @@ services:
 
 
   loans:
-    image: "ashraf2001/loans:mcloanss8"
+    image: "ashraf2001/loans:mcloanss9"
     container_name: "ashraf_loan"
     ports:
       - "8090:8090"
     environment:
       SPRING_APPLICATION_NAME: "loans"
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       config:
         condition: service_healthy
       eureka:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  gatewayserver:
+    image: "ashraf2001/gateway:mcgateways9"
+    container_name: "ashraf_gateway"
+    ports:
+      - "8072:8072"
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+    depends_on:
+      config:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      accounts:
+        condition: service_healthy
+      loans:
+        condition: service_healthy
+      cards:
         condition: service_healthy
     extends:
       file: common-config.yml

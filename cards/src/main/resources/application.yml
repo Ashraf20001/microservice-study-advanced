@@ -25,9 +25,20 @@ management:
       exposure:
         include: "*"
 
+    health:
+      readiness-state:
+        enabled: true
+      liveness-state:
+        enabled: true
+
   endpoint:
     shutdown:
       enabled: true
+    health:
+      probes:
+        enabled: true
+
+
   info:
     env:
       enabled: true
@@ -50,3 +61,9 @@ info:
     name: "cards"
     description: "Cards Service of Microservice tutorial"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      eazybites:
+        cards: "DEBUG"

@@ -5,5 +5,5 @@ import com.eazybites.accounts.exception.ResourceNotFoundException;
 
 public interface CustomerDetailsService {
 
-        public CustomerDetailsDto fetchCustomerDetaisDto(String mobileNumber) throws ResourceNotFoundException;
+        public CustomerDetailsDto fetchCustomerDetaisDto(String correlationId,String mobileNumber) throws ResourceNotFoundException;
 }

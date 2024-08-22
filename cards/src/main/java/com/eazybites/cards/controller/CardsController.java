@@ -16,6 +16,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -39,6 +41,8 @@ import org.springframework.web.bind.annotation.*;
 public class CardsController {
 
     private final ICardsService iCardsService;
+
+    private static final Logger Logger = LoggerFactory.getLogger(CardsController.class);
 
     @Value("${build.version}")
     private String buildVersion;
@@ -93,9 +97,10 @@ public class CardsController {
             )
     })
     @GetMapping("/fetch")
-    public ResponseEntity<CardsDto> fetchCardDetails(@RequestParam
+    public ResponseEntity<CardsDto> fetchCardDetails(@RequestHeader("microservice-correlation-id") String correlationId,@RequestParam
                                                      @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits")
                                                      String mobileNumber) {
+        Logger.debug("microservice-correlation-id found in cards {}",correlationId);
         CardsDto cardsDto = iCardsService.fetchCard(mobileNumber);
         return ResponseEntity.status(HttpStatus.OK).body(cardsDto);
     }

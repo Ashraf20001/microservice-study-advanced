@@ -29,12 +29,22 @@ management:
     web:
       exposure:
         include: "*"
+    health:
+      readiness-state:
+        enabled: true
+      liveness-state:
+        enabled: true
+
   info:
     env:
       enabled: true
   endpoint:
     shutdown:
       enabled: true
+
+    health:
+      probes:
+        enabled: true
 
 endpoints:
   shutdown:
@@ -54,3 +64,9 @@ info:
     name: "accounts"
     description: "Accounts Service of Microservice tutorial"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      eazybites:
+        accounts: "DEBUG"

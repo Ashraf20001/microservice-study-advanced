@@ -16,6 +16,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,8 @@ public class LoansController {
     private final LoansContactInfo loansContactInfo;
 
     private final Environment env;
+
+    private static final Logger Logger = LoggerFactory.getLogger(LoansController.class);
 
     @Value("${build.version}")
     private String buildVersion;
@@ -100,9 +104,10 @@ public class LoansController {
 
 
     @GetMapping("/fetch")
-    public ResponseEntity<LoansDto> fetchLoanDetails(@RequestParam
+    public ResponseEntity<LoansDto> fetchLoanDetails(@RequestHeader("microservice-correlation-id") String correlationId,@RequestParam
                                                      @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                      String mobileNumber) {
+        Logger.debug("microservice-correlation-id found in loans {}",correlationId);
         LoansDto loansDto = iLoansService.fetchLoan(mobileNumber);
         return ResponseEntity.status(HttpStatus.OK).body(loansDto);
     }

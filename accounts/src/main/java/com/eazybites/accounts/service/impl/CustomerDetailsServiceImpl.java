@@ -28,16 +28,16 @@ public class CustomerDetailsServiceImpl implements CustomerDetailsService {
 
 
     @Override
-    public CustomerDetailsDto fetchCustomerDetaisDto(String mobileNumber) throws ResourceNotFoundException {
+    public CustomerDetailsDto fetchCustomerDetaisDto(String correlationId,String mobileNumber) throws ResourceNotFoundException {
         CustomerEntity customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(() -> new ResourceNotFoundException("Customer","Mobile Number",mobileNumber));
         AccountsEntity accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(() -> new ResourceNotFoundException("Accounts", "Customer id", customer.getCustomerId().toString()));
 
         CustomerDetailsDto customerDetailsDto = CustomerMapper.mapToCustomerDetailsDto(customer, new CustomerDetailsDto());
         AccountsDto accountsDto = AccountsMapper.mapToAccountsDto(accounts, new AccountsDto());
         customerDetailsDto.setAccountsDto(accountsDto);
-        ResponseEntity<LoansDto> loansDto = loansClient.fetchLoanDetails(mobileNumber);   // Loans FeignClient
+        ResponseEntity<LoansDto> loansDto = loansClient.fetchLoanDetails(correlationId,mobileNumber);   // Loans FeignClient
         customerDetailsDto.setLoansDto(loansDto.getBody());
-        ResponseEntity<CardsDto> cardsDto = cardsClient.fetchCardDetails(mobileNumber);   // Cards FeignClient
+        ResponseEntity<CardsDto> cardsDto = cardsClient.fetchCardDetails(correlationId,mobileNumber);   // Cards FeignClient
         customerDetailsDto.setCardsDto(cardsDto.getBody());
         return customerDetailsDto;
     }
