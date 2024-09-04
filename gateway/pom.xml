@@ -49,6 +49,17 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+		</dependency>
+
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
@@ -89,7 +100,7 @@
 				<version>3.4.3</version>
 				<configuration>
 					<to>
-						<image>docker.io/ashraf2001/${project.artifactId}:mcgateways9</image>
+						<image>docker.io/ashraf2001/${project.artifactId}:mcgateways10</image>
 					</to>
 				</configuration>
 			</plugin>

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 // name inside the Feign client must match with eureka info name
-@FeignClient("loans")
+@FeignClient(value = "loans",fallback = LoansCallback.class)
 public interface LoansClient {
     @GetMapping(value = "/api/fetch",consumes = "application/json")
     public ResponseEntity<LoansDto> fetchLoanDetails(@RequestHeader("microservice-correlation-id") String correlationId, @RequestParam String mobileNumber);

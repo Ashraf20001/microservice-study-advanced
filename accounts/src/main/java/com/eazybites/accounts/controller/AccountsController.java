@@ -6,6 +6,8 @@ import com.eazybites.accounts.dto.CustomerDto;
 import com.eazybites.accounts.dto.ErrorResponseDto;
 import com.eazybites.accounts.dto.ResponseDto;
 import com.eazybites.accounts.service.IAccountService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +17,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -43,6 +47,8 @@ public class AccountsController {
     private final Environment env;
 
     private final AccountsContactInfo accountsContactInfo;
+
+    private static final Logger Logger = LoggerFactory.getLogger(AccountsController.class);
 
     @Operation(
             summary = "Account creation method",
@@ -175,15 +181,27 @@ public class AccountsController {
         }
     }
 
+    @Retry(name = "getBuildVersionInfo",fallbackMethod = "getBuildVersionFallback")
     @GetMapping("/build-version")
     public ResponseEntity<String> getBuildVersion(){
+        Logger.info("Build Version of accounts microservice got invoked");
         return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
     }
 
+    public ResponseEntity<String> getBuildVersionFallback(Throwable throwable){    // Method signature should be same as actual method
+        Logger.info("Build Version of  fallback method of accounts microservice got invoked");
+        return ResponseEntity.status(HttpStatus.OK).body("9.0");
+    }
+
+    @RateLimiter(name = "getEnvironmentalVariable", fallbackMethod = "getEnvironmentalVariableFallback")
     @GetMapping("/java-version")
     public ResponseEntity<Object> getEnvironmentalVariable(){
         String chocolateyLastPathUpdate = env.getProperty("ChocolateyLastPathUpdate");
         return ResponseEntity.status(HttpStatus.OK).body(chocolateyLastPathUpdate);
+    }
+
+    public ResponseEntity<Object> getEnvironmentalVariableFallback(Throwable throwable){
+        return ResponseEntity.status(HttpStatus.OK).body("Object :)");
     }
 
     @GetMapping("/contact-info")

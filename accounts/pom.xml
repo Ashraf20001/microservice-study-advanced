@@ -45,6 +45,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
 		<dependency>
@@ -95,7 +99,7 @@
 				<version>3.4.3</version>
 				<configuration>
 					<to>
-						<image>docker.io/ashraf2001/${project.artifactId}:mcaccountss9</image>
+						<image>docker.io/ashraf2001/${project.artifactId}:mcaccountss10</image>
 					</to>
 				</configuration>
 			</plugin>

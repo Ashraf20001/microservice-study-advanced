@@ -36,9 +36,13 @@ public class CustomerDetailsServiceImpl implements CustomerDetailsService {
         AccountsDto accountsDto = AccountsMapper.mapToAccountsDto(accounts, new AccountsDto());
         customerDetailsDto.setAccountsDto(accountsDto);
         ResponseEntity<LoansDto> loansDto = loansClient.fetchLoanDetails(correlationId,mobileNumber);   // Loans FeignClient
+        if(null != loansDto){
         customerDetailsDto.setLoansDto(loansDto.getBody());
+        }
         ResponseEntity<CardsDto> cardsDto = cardsClient.fetchCardDetails(correlationId,mobileNumber);   // Cards FeignClient
+        if(null != cardsDto){
         customerDetailsDto.setCardsDto(cardsDto.getBody());
+        }
         return customerDetailsDto;
     }
 }

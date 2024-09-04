@@ -199,6 +199,7 @@ public class LoansController {
 
     @GetMapping("/contact-info")
     public ResponseEntity<Object> getDetails(){
+        Logger.info("Loans Application got invoked");
         return ResponseEntity.status(HttpStatus.OK).body(loansContactInfo);
     }
 

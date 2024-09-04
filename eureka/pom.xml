@@ -74,7 +74,7 @@
 				<version>3.4.3</version>
 				<configuration>
 					<to>
-						<image>docker.io/ashraf2001/${project.artifactId}:eurekaS9</image>
+						<image>docker.io/ashraf2001/${project.artifactId}:eurekaS10</image>
 					</to>
 				</configuration>
 			</plugin>
