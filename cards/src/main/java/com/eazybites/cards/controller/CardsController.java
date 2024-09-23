@@ -100,8 +100,9 @@ public class CardsController {
     public ResponseEntity<CardsDto> fetchCardDetails(@RequestHeader("microservice-correlation-id") String correlationId,@RequestParam
                                                      @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits")
                                                      String mobileNumber) {
-        Logger.debug("microservice-correlation-id found in cards {}",correlationId);
+        Logger.debug("Cards microservice fetch api starts");
         CardsDto cardsDto = iCardsService.fetchCard(mobileNumber);
+        Logger.debug("Cards microservice fetch api ends");
         return ResponseEntity.status(HttpStatus.OK).body(cardsDto);
     }
 

@@ -107,8 +107,9 @@ public class LoansController {
     public ResponseEntity<LoansDto> fetchLoanDetails(@RequestHeader("microservice-correlation-id") String correlationId,@RequestParam
                                                      @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                      String mobileNumber) {
-        Logger.debug("microservice-correlation-id found in loans {}",correlationId);
+        Logger.debug("Loans microservice fetch api starts");
         LoansDto loansDto = iLoansService.fetchLoan(mobileNumber);
+        Logger.debug("Loans microservice fetch api ends");
         return ResponseEntity.status(HttpStatus.OK).body(loansDto);
     }
 

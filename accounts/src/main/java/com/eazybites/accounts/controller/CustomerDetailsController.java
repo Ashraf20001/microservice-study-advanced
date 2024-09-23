@@ -56,8 +56,9 @@ public class CustomerDetailsController {
     })
     @GetMapping("/fetchCustomerDetails")
     public ResponseEntity<CustomerDetailsDto> fetchCustomerDetails(@RequestHeader("microservice-correlation-id") String correlationId, @RequestParam @Pattern(regexp = "(^$|[0-9]{10})", message = "Mobile number must be 10 digits") String mobileNumber){
-        LOGGER.debug("microservice-correlation-id found in accounts {}",correlationId);
+        LOGGER.debug("Accounts fetchCustomerDetails starts");
         CustomerDetailsDto customerDetailsDto = customerDetailsService.fetchCustomerDetaisDto(correlationId,mobileNumber);
+        LOGGER.debug("Accounts fetchCustomerDetails ends");
         return new ResponseEntity<>(customerDetailsDto, HttpStatus.OK);
     }
 
