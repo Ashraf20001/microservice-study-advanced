@@ -1,5 +1,16 @@
 services:
-
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: keycloak
+    ports:
+      - "7080:8080"
+    environment:
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "admin"
+    command: "start-dev"
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
   read:
     image: grafana/loki:3.1.0
     command: "-config.file=/etc/loki/config.yaml -target=read"
@@ -217,7 +228,7 @@ services:
       service: network-deploy-service
 
   config:
-    image: "ashraf2001/config:mcconfigs11"
+    image: "ashraf2001/config:mcconfigs12"
     container_name: "ashraf_config"
     ports:
       - "8071:8071"
@@ -235,7 +246,7 @@ services:
 
 
   eureka:
-    image: "ashraf2001/eureka:eurekaS11"
+    image: "ashraf2001/eureka:eurekaS12"
     container_name: "ashraf_eureka"
     ports:
       - "8070:8070"
@@ -256,10 +267,8 @@ services:
       service: microservice-configserver-config
 
   accounts:
-    image: "ashraf2001/accounts:mcaccountss11"
+    image: "ashraf2001/accounts:mcaccountss12"
     container_name: "ashraf_acc"
-    ports:
-      - "8080:8080"
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       OTEL_SERVICE_NAME: "accounts"
@@ -279,10 +288,8 @@ services:
       service: microservice-eureka-config
 
   cards:
-    image: "ashraf2001/cards:mcccardss11"
+    image: "ashraf2001/cards:mcccardss12"
     container_name: "ashraf_card"
-    ports:
-      - "9000:9000"
     environment:
       SPRING_APPLICATION_NAME: "cards"
       OTEL_SERVICE_NAME: "cards"
@@ -303,10 +310,8 @@ services:
 
 
   loans:
-    image: "ashraf2001/loans:mcloanss11"
+    image: "ashraf2001/loans:mcloanss12"
     container_name: "ashraf_loan"
-    ports:
-      - "8090:8090"
     environment:
       SPRING_APPLICATION_NAME: "loans"
       OTEL_SERVICE_NAME: "loans"
@@ -326,13 +331,14 @@ services:
       service: microservice-eureka-config
 
   gatewayserver:
-    image: "ashraf2001/gateway:mcgateways11"
+    image: "ashraf2001/gateway:mcgateways12"
     container_name: "ashraf_gateway"
     ports:
       - "8072:8072"
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
       OTEL_SERVICE_NAME: "gatewayserver"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
     depends_on:
       config:
         condition: service_healthy

@@ -102,7 +102,7 @@
 				<version>3.4.3</version>
 				<configuration>
 					<to>
-						<image>docker.io/ashraf2001/${project.artifactId}:mcloanss11</image>
+						<image>docker.io/ashraf2001/${project.artifactId}:mcloanss12</image>
 					</to>
 				</configuration>
 			</plugin>
