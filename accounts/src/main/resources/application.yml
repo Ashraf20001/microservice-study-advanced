@@ -28,6 +28,22 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+    function:
+      definition: updateAccount
+    stream:
+      bindings:
+        sendCommunication-out-0:
+          destination: send-communication
+        updateAccount-in-0:
+          destination: communication-send
+          group: ${spring.application.name}
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
 
 management:
   endpoints:

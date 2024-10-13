@@ -3,6 +3,7 @@ package com.eazybites.accounts.service.impl;
 import com.eazybites.accounts.constants.AccountsConstants;
 import com.eazybites.accounts.dto.AccountsDto;
 import com.eazybites.accounts.dto.CustomerDto;
+import com.eazybites.accounts.dto.MessageDto;
 import com.eazybites.accounts.entity.AccountsEntity;
 import com.eazybites.accounts.entity.CustomerEntity;
 import com.eazybites.accounts.exception.CustomerAlreadyExistException;
@@ -13,6 +14,8 @@ import com.eazybites.accounts.repository.AccountsRepository;
 import com.eazybites.accounts.repository.CustomerRepository;
 import com.eazybites.accounts.service.IAccountService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,11 +23,14 @@ import java.util.Random;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AccountServiceImpl implements IAccountService {
 	
 	private AccountsRepository accountsRepository;
 	
 	private CustomerRepository customerRepository;
+
+	private StreamBridge streamBridge;
 
 	/**
 	 *@param customerDto
@@ -37,7 +43,15 @@ public class AccountServiceImpl implements IAccountService {
 			throw new CustomerAlreadyExistException("Customer "+customerDto.getName()+" is already present");
 		}
 		CustomerEntity customerSavedRepo =customerRepository.save(customer);
-			accountsRepository.save(createAccount(customerSavedRepo));
+		AccountsEntity savedAccountsEntity = accountsRepository.save(createAccount(customerSavedRepo));
+		sendMessageToEventStream(customerSavedRepo,savedAccountsEntity);
+	}
+
+	private void sendMessageToEventStream(CustomerEntity customerSavedRepo, AccountsEntity savedAccountsEntity) {
+		MessageDto messageDto = new MessageDto(savedAccountsEntity.getAccountNumber(), customerSavedRepo.getName(), customerSavedRepo.getEmail(), customerSavedRepo.getMobileNumber());
+		log.info("Sending Communication request for the details {}",messageDto);
+		var result = streamBridge.send("sendCommunication-out-0", messageDto);
+		log.info("Is the Communication request sent successful = {}",result);
 	}
 
 	/**
@@ -100,6 +114,7 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 
+
 	/**
 	 * @param customer
 	 * @return
@@ -112,6 +127,24 @@ public class AccountServiceImpl implements IAccountService {
 		accountsEntity.setAccountType(AccountsConstants.SAVINGS);
 		accountsEntity.setBranchAddress(AccountsConstants.ADDRESS);
 		return accountsEntity;
+	}
+
+	/**
+	 * @param accountNumber
+	 * @return
+	 */
+	@Override
+	public boolean updateAccountsForCommunication(Long accountNumber) {
+		boolean isUpdated = false;
+		if(accountNumber !=null){
+			AccountsEntity accounts = accountsRepository.findById(accountNumber).orElseThrow(() -> {
+				throw new ResourceNotFoundException("Accounts", "accountNumber", accountNumber.toString());
+			});
+			accounts.setCommunicationProcessed(true);
+			accountsRepository.save(accounts);
+			isUpdated = true;
+		}
+		return isUpdated;
 	}
 
 

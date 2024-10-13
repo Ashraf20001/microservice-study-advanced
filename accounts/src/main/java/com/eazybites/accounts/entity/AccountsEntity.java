@@ -29,4 +29,7 @@ public class AccountsEntity extends BasePredicate {
 
 	@Column(name = "branch_address")
 	private String branchAddress;
+
+	@Column(name="communication_prcd")
+	private Boolean communicationProcessed;
 }
