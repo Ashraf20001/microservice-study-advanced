@@ -130,7 +130,7 @@
 				<version>3.4.3</version>
 				<configuration>
 					<to>
-						<image>docker.io/ashraf2001/${project.artifactId}:mcgateways13</image>
+						<image>docker.io/ashraf2001/${project.artifactId}:mcgateways14</image>
 					</to>
 				</configuration>
 			</plugin>

@@ -37,13 +37,10 @@ spring:
         updateAccount-in-0:
           destination: communication-send
           group: ${spring.application.name}
-
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    connection-timeout: 10s
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
 
 management:
   endpoints:
